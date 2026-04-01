@@ -391,6 +391,45 @@
   new MutationObserver(syncBars).observe(document.body, { subtree: true, childList: true, characterData: true });
 </script>
 
+<!-- GitHub feed polling (agent_a) -->
+<script type="module">
+  import { startPolling, stopPolling } from './github-feed.js';
+
+  const input  = document.getElementById('watch-input');
+  const btn    = document.getElementById('connect-btn');
+  const errEl  = document.getElementById('connect-error');
+  const dot    = document.getElementById('status-dot');
+  const label  = document.getElementById('status-label');
+
+  // Also wire the header connect button if present
+  function getUsername() {
+    return (input?.value || '').trim();
+  }
+
+  function connect() {
+    const username = getUsername();
+    if (!username) return;
+    if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
+    startPolling(username, null);
+    if (label) label.textContent = `watching @${username}`;
+  }
+
+  if (btn) btn.addEventListener('click', connect);
+  if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
+
+  // Auto-resume if username was saved
+  const saved = localStorage.getItem('tamago_username');
+  if (saved && input) {
+    input.value = saved;
+    connect();
+  }
+
+  // Persist username on connect
+  if (input) input.addEventListener('change', () => {
+    localStorage.setItem('tamago_username', input.value.trim());
+  });
+</script>
+
 <!-- App wiring (owned by agent_b / Codex) -->
 <script type="module" src="./app.js"></script>
 
