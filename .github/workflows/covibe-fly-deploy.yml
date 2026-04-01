@@ -1,0 +1,80 @@
+name: CoVibe Fly Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Commit SHA to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: covibe-deploy
+    concurrency:
+      group: covibe-fly-deploy
+      cancel-in-progress: true
+    env:
+      FLY_APP_NAME: covibe-ascii-art-tamagotchi-webapp-80b480
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      COVIBE_RUNTIME_SECRETS_JSON: ${{ secrets.COVIBE_RUNTIME_SECRETS_JSON }}
+    steps:
+      - name: Checkout repository source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Write trusted Fly config
+        run: |
+          cat > fly.toml <<'EOF'
+          app = "covibe-ascii-art-tamagotchi-webapp-80b480"
+          primary_region = "ord"
+
+          [build]
+
+          [http_service]
+            internal_port = 8080
+            force_https = true
+            auto_stop_machines = "off"
+            auto_start_machines = true
+            min_machines_running = 1
+
+          [[vm]]
+            cpu_kind = "shared"
+            cpus = 1
+            memory_mb = 512
+          EOF
+
+      - name: Sync CoVibe runtime secrets
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          raw = os.environ.get("COVIBE_RUNTIME_SECRETS_JSON", "").strip() or "{}"
+          secrets = json.loads(raw)
+          if not isinstance(secrets, dict):
+              raise SystemExit("Runtime secrets payload must be a JSON object.")
+          if secrets:
+              command = [
+                  "flyctl",
+                  "secrets",
+                  "set",
+                  "--stage",
+                  "-a",
+                  os.environ["FLY_APP_NAME"],
+              ]
+              command.extend(f"{key}={value}" for key, value in secrets.items())
+              subprocess.run(command, check=True)
+          PY
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only --config fly.toml
