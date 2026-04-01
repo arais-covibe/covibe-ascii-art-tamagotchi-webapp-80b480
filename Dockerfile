@@ -1,6 +1,6 @@
-FROM alpine:3.20
+FROM python:3.12-alpine
 
 WORKDIR /app
 COPY . /app
 EXPOSE 8080
-CMD ["busybox", "httpd", "-f", "-p", "8080", "-h", "/app"]
+CMD ["python3", "-m", "http.server", "8080", "--directory", "/app"]
