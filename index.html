@@ -40,28 +40,82 @@
     /* ── Pet art ── */
     #pet-art {
       font-family: 'Share Tech Mono', monospace;
-      font-size: clamp(3rem, 10vw, 5rem);
-      line-height: 1.35;
+      font-size: clamp(3rem, 12vw, 10rem);
+      line-height: 1.3;
       white-space: pre;
       color: var(--green);
-      text-shadow: 0 0 18px rgba(74,222,128,0.9), 0 0 40px rgba(74,222,128,0.35);
+      text-shadow: 0 0 20px rgba(74,222,128,0.9), 0 0 50px rgba(74,222,128,0.3);
       display: block;
       text-align: center;
-      width: 100%;
       transition: color 0.4s;
     }
 
-    /* ── CRT bezel around pet ── */
+    /* ══ FULLSCREEN LAYOUT ══ */
+    html, body { height: 100%; overflow: hidden; }
+
+    #app-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+      padding: 0;
+    }
+
+    /* ── HUD top bar ── */
+    #hud-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      gap: 0.5rem;
+    }
+    .hud-name {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      white-space: nowrap;
+    }
+    .hud-center {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .mood-pill {
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+      background: rgba(74,222,128,0.08);
+      border: 1px solid var(--dim);
+      font-size: 0.65rem;
+      color: var(--green);
+      text-transform: capitalize;
+      letter-spacing: 0.06em;
+    }
+    #settings-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.2rem;
+      line-height: 1;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    #settings-btn:hover { color: var(--green); }
+
+    /* ── CRT bezel — fills all remaining vertical space ── */
     #pet-stage-bezel {
-      background: #050a05;
-      border: 2px solid var(--dim);
-      border-radius: 12px;
-      padding: 1rem 0.5rem;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
-      box-shadow:
-        inset 0 0 30px rgba(0,0,0,0.7),
-        0 0 0 1px rgba(74,222,128,0.08),
-        0 0 18px rgba(74,222,128,0.06);
+      background: #030803;
       overflow: hidden;
     }
     #pet-stage-bezel::before {
@@ -70,44 +124,22 @@
       inset: 0;
       background-image: repeating-linear-gradient(
         0deg, transparent, transparent 3px,
-        rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px
+        rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px
       );
       pointer-events: none;
-      border-radius: inherit;
-    }
-    /* corner dots */
-    #pet-stage-bezel::after {
-      content: '· · · ·';
-      position: absolute;
-      bottom: 4px;
-      right: 8px;
-      font-size: 0.55rem;
-      color: var(--dim);
-      letter-spacing: 3px;
     }
 
-    /* ── Speech bubble ── */
+    /* ── Speech bubble — overlaid above stat bar ── */
     #speech-bubble {
       position: relative;
-      background: rgba(12,21,12,0.95);
-      border: 1px solid rgba(74,222,128,0.25);
-      border-radius: 8px;
-      padding: 0.55rem 0.85rem;
-      font-size: 0.82rem;
+      background: rgba(5,12,5,0.92);
+      border-top: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      font-size: 0.78rem;
       color: var(--green);
-      min-height: 2.4rem;
       line-height: 1.5;
       word-break: break-word;
-      box-shadow: 0 0 10px rgba(74,222,128,0.07);
-    }
-    #speech-bubble::after {
-      content: '';
-      position: absolute;
-      bottom: -9px;
-      left: 28px;
-      border-width: 9px 6px 0 6px;
-      border-style: solid;
-      border-color: rgba(74,222,128,0.25) transparent transparent transparent;
+      flex-shrink: 0;
     }
 
     /* ── Status dot ── */
@@ -128,10 +160,43 @@
       letter-spacing: 0.08em;
     }
 
+    /* ── Stat row ── */
+    #stat-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.45rem 1rem;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .stat-col {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex: 1;
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    .stat-val {
+      font-size: 0.65rem;
+      color: var(--text);
+      min-width: 1.5rem;
+    }
+    .poll-status {
+      font-size: 0.6rem;
+      color: var(--muted);
+      white-space: nowrap;
+      margin-left: auto;
+    }
+
     /* ── Stat bars ── */
     .stat-bar-track {
       flex: 1;
-      height: 6px;
+      height: 5px;
       background: var(--border);
       border-radius: 3px;
       overflow: hidden;
@@ -140,7 +205,62 @@
       height: 100%;
       border-radius: 3px;
       transition: width 0.6s ease, background 0.6s ease;
-      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* ══ SETTINGS PANEL ══ */
+    #settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+    }
+    #settings-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(380px, 95vw);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      overflow-y: auto;
+    }
+    #settings-panel.open {
+      transform: translateX(0);
+    }
+    #settings-overlay.open {
+      display: block;
+    }
+    #settings-inner {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #settings-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.2rem;
+      transition: color 0.2s;
+    }
+    #settings-close:hover { color: var(--green); }
+    .settings-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
     }
 
     /* ── Buttons ── */
@@ -273,11 +393,6 @@
     #activity-feed li strong { color: var(--text) !important; font-weight: normal !important; text-transform: none !important; }
     #activity-feed li p { margin: 0.2rem 0 0 !important; color: var(--muted) !important; font-size: 0.68rem !important; }
 
-    /* ── Responsive pet art ── */
-    @media (max-width: 380px) {
-      #pet-art { font-size: 0.95rem; }
-    }
-
     /* ── Responsive layout ── */
     @media (max-width: 480px) {
       body { font-size: 14px; }
@@ -287,134 +402,105 @@
 </head>
 <body>
 
-<div class="w-full max-w-3xl mx-auto px-4 py-5" id="app-layout">
+<!-- ══════════════════════════════════════
+     FULLSCREEN PET STAGE
+     ══════════════════════════════════════ -->
+<div id="app-layout">
 
-  <!-- Header -->
-  <header class="text-center pb-2">
-    <h1 class="text-lg tracking-widest text-emerald-400 glow font-bold">ASCII COMPANION</h1>
-    <p class="text-xs mt-0.5" style="color:var(--muted)">your github dev buddy</p>
-  </header>
-
-  <div class="flex flex-col md:flex-row gap-3 items-start">
-
-  <!-- ══ LEFT COLUMN: pet ══ -->
-  <div class="flex flex-col gap-3 w-full md:w-80 md:flex-shrink-0">
-
-  <!-- ══════════════════════════════════════
-       PET STAGE  (animation owned by agent_a)
-       ══════════════════════════════════════ -->
-  <div class="card scanlines flex flex-col gap-3">
-
-    <!-- top bar: name + mood -->
-    <div class="flex justify-between items-center">
-      <span id="companion-name" class="text-xs tracking-widest" style="color:var(--dim)">ASCII COMPANION</span>
-      <span id="companion-mood">idle</span>
+  <!-- HUD: top bar -->
+  <div id="hud-top">
+    <span id="companion-name" class="hud-name">ASCII COMPANION</span>
+    <div class="hud-center">
+      <span class="dot off" id="status-dot"></span>
+      <span id="status-label">not connected</span>
+      <span id="companion-mood" class="mood-pill">idle</span>
     </div>
+    <button id="settings-btn" title="settings">⚙</button>
+  </div>
 
-    <!-- speech bubble -->
-    <div id="speech-bubble">
-      <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
-    </div>
-
-    <!-- ASCII pet in CRT bezel -->
-    <div id="pet-stage-bezel" class="flex justify-center items-center">
-      <pre id="pet-art">  ____
+  <!-- Pet stage — takes all remaining space -->
+  <div id="pet-stage-bezel">
+    <pre id="pet-art">  ____
  / o o\
  \____/ </pre>
-    </div>
-
-    <!-- stats row -->
-    <div class="grid grid-cols-3 gap-2 text-xs" style="color:var(--muted)">
-      <div class="flex flex-col gap-1">
-        <span>excitement</span>
-        <div class="stat-bar-track">
-          <div id="bar-excitement" class="stat-bar-fill" style="width:50%;background:var(--green)"></div>
-        </div>
-        <span id="stat-excitement" style="color:var(--text)">50</span>
-      </div>
-      <div class="flex flex-col gap-1">
-        <span>social</span>
-        <div class="stat-bar-track">
-          <div id="bar-social" class="stat-bar-fill" style="width:50%;background:var(--blue)"></div>
-        </div>
-        <span id="stat-social" style="color:var(--text)">50</span>
-      </div>
-      <div class="flex flex-col gap-1">
-        <span>focus</span>
-        <div class="stat-bar-track">
-          <div id="bar-focus" class="stat-bar-fill" style="width:50%;background:var(--yellow)"></div>
-        </div>
-        <span id="stat-focus" style="color:var(--text)">50</span>
-      </div>
-    </div>
   </div>
 
-  </div><!-- end left column -->
-
-  <!-- ══ RIGHT COLUMN: controls + feed ══ -->
-  <div class="flex flex-col gap-3 flex-1 min-w-0">
-
-  <!-- ══════════════════════════════════════
-       GITHUB CONNECT
-       ══════════════════════════════════════ -->
-  <div class="card flex flex-col gap-2">
-    <div class="section-label">— github connect —</div>
-    <div class="flex gap-2 items-center">
-      <span class="dot off" id="status-dot"></span>
-      <span class="text-xs" style="color:var(--muted)" id="status-label">not connected</span>
-    </div>
-    <div class="flex gap-2">
-      <input id="github-username-input" class="txt-input" type="text" placeholder="your github username..." autocomplete="off" spellcheck="false" />
-      <button id="connect-btn" class="btn-primary">connect</button>
-    </div>
-    <div id="connect-error" class="text-xs hidden" style="color:var(--red)"></div>
+  <!-- Speech bubble -->
+  <div id="speech-bubble">
+    <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
   </div>
 
-  <!-- ══════════════════════════════════════
-       WATCH LIST  (wired by agent_b / app.js)
-       ══════════════════════════════════════ -->
-  <div class="card" id="runtime-root">
-    <div class="section-label">— watch list —</div>
-
-    <form id="watch-form" class="flex gap-2 mb-3">
-      <input id="watch-input" class="txt-input" type="text" placeholder="owner/repo or label" autocomplete="off" />
-      <button type="submit" class="btn-primary">add</button>
-    </form>
-
-    <ul id="watch-list" class="flex flex-col gap-1 mb-3">
-      <li class="text-xs" style="color:var(--muted)">no watches yet</li>
-    </ul>
-
-    <button id="simulate-event" class="btn-primary w-full mb-2">⚡ simulate event</button>
-
-    <div class="flex gap-2">
-      <button id="export-state" class="btn-primary flex-1">↑ export</button>
-      <label class="btn-primary flex-1 text-center cursor-pointer">
-        ↓ import
-        <input id="import-state" type="file" accept="application/json" class="hidden" />
-      </label>
+  <!-- Stat bars -->
+  <div id="stat-row">
+    <div class="stat-col">
+      <span class="stat-label">exc</span>
+      <div class="stat-bar-track"><div id="bar-excitement" class="stat-bar-fill" style="width:50%;background:var(--green)"></div></div>
+      <span id="stat-excitement" class="stat-val">50</span>
     </div>
+    <div class="stat-col">
+      <span class="stat-label">soc</span>
+      <div class="stat-bar-track"><div id="bar-social" class="stat-bar-fill" style="width:50%;background:var(--blue)"></div></div>
+      <span id="stat-social" class="stat-val">50</span>
+    </div>
+    <div class="stat-col">
+      <span class="stat-label">foc</span>
+      <div class="stat-bar-track"><div id="bar-focus" class="stat-bar-fill" style="width:50%;background:var(--yellow)"></div></div>
+      <span id="stat-focus" class="stat-val">50</span>
+    </div>
+    <span id="poll-status" class="poll-status">polling paused</span>
   </div>
-
-  <!-- ══════════════════════════════════════
-       ACTIVITY FEED  (wired by agent_b)
-       ══════════════════════════════════════ -->
-  <div class="card">
-    <div class="section-label">— activity feed —</div>
-    <ul id="activity-feed" class="flex flex-col gap-1 max-h-44 overflow-y-auto">
-      <li class="feed-item">no events yet<span class="blink">_</span></li>
-    </ul>
-  </div>
-
-  </div><!-- end right column -->
-  </div><!-- end flex row -->
-
-  <!-- Footer -->
-  <footer class="text-center text-xs pb-2 pt-1" style="color:var(--muted)">
-    <span id="poll-status">polling paused</span>
-  </footer>
 
 </div>
+
+<!-- ══════════════════════════════════════
+     SETTINGS PANEL (slides in from right)
+     ══════════════════════════════════════ -->
+<div id="settings-panel">
+  <div id="settings-inner">
+
+    <div class="settings-header">
+      <span class="section-label">— settings —</span>
+      <button id="settings-close">✕</button>
+    </div>
+
+    <!-- GitHub connect -->
+    <div class="settings-section">
+      <div class="section-label">github connect</div>
+      <div class="flex gap-2">
+        <input id="github-username-input" class="txt-input" type="text" placeholder="your github username..." autocomplete="off" spellcheck="false" />
+        <button id="connect-btn" class="btn-primary">connect</button>
+      </div>
+      <div id="connect-error" class="text-xs hidden" style="color:var(--red);margin-top:0.3rem"></div>
+    </div>
+
+    <!-- Watch list -->
+    <div class="settings-section" id="runtime-root">
+      <div class="section-label">watch list</div>
+      <form id="watch-form" class="flex gap-2" style="margin-bottom:0.6rem">
+        <input id="watch-input" class="txt-input" type="text" placeholder="owner/repo or label" autocomplete="off" />
+        <button type="submit" class="btn-primary">add</button>
+      </form>
+      <ul id="watch-list" class="flex flex-col gap-1" style="margin-bottom:0.6rem">
+        <li class="text-xs" style="color:var(--muted)">no watches yet</li>
+      </ul>
+      <button id="simulate-event" class="btn-primary w-full" style="margin-bottom:0.5rem">⚡ simulate event</button>
+      <div class="flex gap-2">
+        <button id="export-state" class="btn-primary flex-1">↑ export</button>
+        <label class="btn-primary flex-1 text-center cursor-pointer">↓ import<input id="import-state" type="file" accept="application/json" class="hidden" /></label>
+      </div>
+    </div>
+
+    <!-- Activity feed -->
+    <div class="settings-section">
+      <div class="section-label">activity feed</div>
+      <ul id="activity-feed" class="flex flex-col gap-1" style="max-height:40vh;overflow-y:auto">
+        <li class="feed-item">no events yet<span class="blink">_</span></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+<div id="settings-overlay"></div>
 
 <!-- ══════════════════════════════════════
      ANIMATION BRIDGE  (agent_a)
@@ -540,6 +626,27 @@
   if (input) input.addEventListener('change', () => {
     localStorage.setItem('tamago_username', input.value.trim());
   });
+</script>
+
+<!-- Settings panel toggle (agent_a) -->
+<script>
+  const panel   = document.getElementById('settings-panel');
+  const overlay = document.getElementById('settings-overlay');
+  const openBtn = document.getElementById('settings-btn');
+  const closeBtn= document.getElementById('settings-close');
+
+  function openSettings() {
+    panel.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeSettings() {
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  openBtn?.addEventListener('click', openSettings);
+  closeBtn?.addEventListener('click', closeSettings);
+  overlay?.addEventListener('click', closeSettings);
 </script>
 
 <!-- App wiring (owned by agent_b / Codex) -->
