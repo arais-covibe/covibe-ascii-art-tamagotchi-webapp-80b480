@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Animated Creatures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a; /* tailwind slate-900 */
+            color: #4ade80; /* tailwind green-400 */
+        }
+        .ascii-container {
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.4);
+        }
+        /* Custom scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 flex flex-col items-center justify-center font-sans">
+
+    <div class="max-w-6xl w-full">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-widest text-emerald-400 mb-2" style="text-shadow: 0 0 10px rgba(52, 211, 153, 0.6);">
+                ASCII MENAGERIE
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base uppercase tracking-widest">30 Digital Lifeforms</p>
+        </header>
+
+        <main id="creature-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <!-- Creatures will be injected here via JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        // Data for each creature including its name, animation frames, and update speed
+        const creatures = [
+            {
+                name: "Classic Slime",
+                speed: 600,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `,
+                    `  ____  \n / > <\\ \n \\____/ \n        `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Winking Slime",
+                speed: 600,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / - o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o -\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Bouncing Slime",
+                speed: 300,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `  ____  \n / o o\\ \n \\____/ \n        `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n        \n  ____  \n /_o_o\\ `
+                ]
+            },
+            {
+                name: "Sleepy Slime",
+                speed: 1000,
+                frames: [
+                    `   z    \n  ____  \n / - -\\ \n \\____/ `,
+                    `    Z   \n  ____  \n / - -\\ \n \\____/ `,
+                    `     Z  \n  ____  \n / - -\\ \n \\____/ `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Boiling Slime",
+                speed: 300,
+                frames: [
+                    `   .    \n  ____  \n / > <\\ \n \\____/ `,
+                    `     .  \n  ____  \n / > <\\ \n \\____/ `,
+                    `  .     \n  ____  \n / > <\\ \n \\____/ `,
+                    `    .   \n  ____  \n / > <\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Hungry Slime",
+                speed: 500,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\_--_/ `,
+                    `        \n  ____  \n / o o\\ \n \\_OO_/ `,
+                    `        \n  ____  \n / o o\\ \n \\_ww_/ `,
+                    `        \n  ____  \n / o o\\ \n \\_--_/ `
+                ]
+            },
+            {
+                name: "Spark Slime",
+                speed: 200,
+                frames: [
+                    `   * \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\*\n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n*\\____/ `,
+                    `        \n *____  \n / o o\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Hyper Slime",
+                speed: 150,
+                frames: [
+                    `  ____  \n / O O\\ \n \\____/ \n        `,
+                    `        \n  ____  \n / O O\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Dizzy Slime",
+                speed: 250,
+                frames: [
+                    `        \n  ____  \n / @ @\\ \n \\____/ `,
+                    `        \n  ____  \n / + +\\ \n \\____/ `,
+                    `        \n  ____  \n / x x\\ \n \\____/ `,
+                    `        \n  ____  \n / @ @\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Singing Slime",
+                speed: 600,
+                frames: [
+                    `   ♪    \n  ____  \n / ^ ^\\ \n \\_O__/ `,
+                    `        \n  ____  \n / ^ ^\\ \n \\_o__/ `,
+                    `      ♫ \n  ____  \n / ^ ^\\ \n \\_O__/ `,
+                    `        \n  ____  \n / ^ ^\\ \n \\_o__/ `
+                ]
+            },
+            {
+                name: "Happy Slime",
+                speed: 500,
+                frames: [
+                    `        \n  ____  \n / ^ ^\\ \n \\_U__/ `,
+                    `        \n  ____  \n / ^ ^\\ \n \\_D__/ `
+                ]
+            },
+            {
+                name: "Sad Slime",
+                speed: 800,
+                frames: [
+                    `        \n  ____  \n / T T\\ \n \\_n__/ `,
+                    `        \n  ____  \n / T T\\ \n \\_~__/ `,
+                    `  .     \n  ____  \n / T T\\ \n \\_n__/ `,
+                    `    .   \n  ____  \n / T T\\ \n \\_~__/ `
+                ]
+            },
+            {
+                name: "Angry Slime",
+                speed: 150,
+                frames: [
+                    `   /|   \n  ____  \n / > <\\ \n \\_m__/ `,
+                    `   |\\   \n  ____  \n / > <\\ \n \\_m__/ `
+                ]
+            },
+            {
+                name: "Scared Slime",
+                speed: 100,
+                frames: [
+                    `        \n  ____  \n / O O\\ \n \\_~__/ `,
+                    `        \n  ____  \n / o o\\ \n \\_~__/ `,
+                    `        \n  ____  \n / O O\\ \n \\_~__/ `,
+                    `        \n  .__.  \n / o o\\ \n \\_~__/ `
+                ]
+            },
+            {
+                name: "Confused Slime",
+                speed: 700,
+                frames: [
+                    `   ?    \n  ____  \n / o .\\ \n \\____/ `,
+                    `    ?   \n  ____  \n / . o\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "In Love Slime",
+                speed: 600,
+                frames: [
+                    `   ♥    \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
+                    `        \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
+                    `     ♥  \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
+                    `        \n  ____  \n / ♥ ♥\\ \n \\_w__/ `
+                ]
+            },
+            {
+                name: "Anxious Slime",
+                speed: 250,
+                frames: [
+                    `   ,    \n  ____  \n / o o\\ \n \\_~__/ `,
+                    `    ,   \n  ____  \n / o o\\ \n \\_~__/ `,
+                    `        \n  ____  \n / o o\\ \n \\_~__/ `,
+                    `  ,     \n  ____  \n / o o\\ \n \\_~__/ `
+                ]
+            },
+            {
+                name: "Zen Slime",
+                speed: 1500,
+                frames: [
+                    `   ~    \n  ____  \n / - -\\ \n \\____/ `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Surprised Slime",
+                speed: 400,
+                frames: [
+                    `        \n  ____  \n / O O\\ \n \\_O__/ `,
+                    `   !    \n  ____  \n / O O\\ \n \\_O__/ `,
+                    `   !!   \n  ____  \n / O O\\ \n \\_O__/ `,
+                    `        \n  ____  \n / o o\\ \n \\_o__/ `
+                ]
+            },
+            {
+                name: "Embarrassed Slime",
+                speed: 900,
+                frames: [
+                    `        \n  ____  \n / ///\\ \n \\_.._/ `,
+                    `        \n  ____  \n / ///\\ \n \\_**_/ `
+                ]
+            },
+            {
+                name: "Idle Slime",
+                speed: 300,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / - -\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / o .\\ \n \\____/ `,
+                    `        \n  ____  \n / o .\\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n / . o\\ \n \\____/ `,
+                    `        \n  ____  \n / . o\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Thinking Slime",
+                speed: 500,
+                frames: [
+                    `        \n  ____  \n / ^ ^\\ \n \\____/ `,
+                    `   .    \n  ____  \n / ^ ^\\ \n \\____/ `,
+                    `   ..   \n  ____  \n / ^ ^\\ \n \\____/ `,
+                    `   ...  \n  ____  \n / ^ ^\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Typing Slime",
+                speed: 150,
+                frames: [
+                    `        \n  ____  \n / - -\\ \n \\_ww_/ `,
+                    `        \n  ____  \n / - -\\ \n \\_mm_/ `,
+                    `        \n  ____  \n / - -\\ \n \\_wm_/ `,
+                    `        \n  ____  \n / - -\\ \n \\_mw_/ `
+                ]
+            },
+            {
+                name: "Listening Slime",
+                speed: 400,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `   ( )  \n  ____  \n / o o\\ \n \\____/ `,
+                    `  (( )) \n  ____  \n / o o\\ \n \\____/ `,
+                    `   ( )  \n  ____  \n / o o\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Error Slime",
+                speed: 200,
+                frames: [
+                    `        \n  ____  \n / > <\\ \n \\____/ `,
+                    `  \\  /  \n  ____  \n / > <\\ \n \\____/ `,
+                    `   ><   \n  ____  \n / > <\\ \n \\____/ `,
+                    `  /  \\  \n  ____  \n / > <\\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Success Slime",
+                speed: 200,
+                frames: [
+                    `        \n  ____  \n / ^ ^\\ \n \\_D__/ `,
+                    `   .    \n  ____  \n / ^ ^\\ \n \\_D__/ `,
+                    `  \\|/   \n  ____  \n / ^ ^\\ \n \\_D__/ `,
+                    ` --*--  \n  ____  \n / ^ ^\\ \n \\_D__/ `,
+                    `  /|\\   \n  ____  \n / ^ ^\\ \n \\_D__/ `
+                ]
+            },
+            {
+                name: "Scanning Slime",
+                speed: 150,
+                frames: [
+                    `        \n  ____  \n / .  \\ \n \\____/ `,
+                    `        \n  ____  \n /  . \\ \n \\____/ `,
+                    `        \n  ____  \n /   .\\ \n \\____/ `,
+                    `        \n  ____  \n /  . \\ \n \\____/ `
+                ]
+            },
+            {
+                name: "Greeting Slime",
+                speed: 250,
+                frames: [
+                    `        \n  ____/ \n / ^ ^| \n \\____/ `,
+                    `        \n  ____\\ \n / ^ ^| \n \\____/ `
+                ]
+            },
+            {
+                name: "Agreeing Slime",
+                speed: 400,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\_v__/ `,
+                    `        \n  ____  \n / - -\\ \n \\_v__/ `,
+                    `        \n        \n  ____  \n /_v_v\\ `,
+                    `        \n  ____  \n / o o\\ \n \\_v__/ `
+                ]
+            },
+            {
+                name: "Disagreeing Slime",
+                speed: 200,
+                frames: [
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n /o o \\ \n \\____/ `,
+                    `        \n  ____  \n / o o\\ \n \\____/ `,
+                    `        \n  ____  \n /  oo\\ \n \\____/ `
+                ]
+            }
+        ];
+
+        const gridElement = document.getElementById('creature-grid');
+
+        // Initialize and render the creatures
+        creatures.forEach((creature, index) => {
+            // Create container for the card
+            const card = document.createElement('div');
+            card.className = "bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center transform transition-transform hover:scale-105 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-900/50 shadow-md";
+
+            // Create title
+            const title = document.createElement('h2');
+            title.className = "text-xs font-bold text-slate-300 uppercase tracking-widest mb-4 border-b border-slate-600 pb-1 w-full text-center";
+            title.innerText = creature.name;
+
+            // Create preformatted text block for ASCII art
+            const pre = document.createElement('pre');
+            pre.className = "ascii-container font-mono text-sm md:text-base whitespace-pre leading-snug flex items-center justify-center min-h-[120px]";
+            pre.id = `creature-art-${index}`;
+            pre.innerText = creature.frames[0]; // Set initial frame
+
+            // Assemble card
+            card.appendChild(title);
+            card.appendChild(pre);
+            gridElement.appendChild(card);
+
+            // Start animation loop for this specific creature
+            let currentFrame = 0;
+            setInterval(() => {
+                currentFrame = (currentFrame + 1) % creature.frames.length;
+                document.getElementById(`creature-art-${index}`).innerText = creature.frames[currentFrame];
+            }, creature.speed);
+        });
+    </script>
+</body>
+</html>
