@@ -199,6 +199,53 @@
       color: var(--muted);
       margin-bottom: 0.6rem;
     }
+
+    /* ── Override Codex inline styles for watch list ── */
+    #watch-list li {
+      background: rgba(26,46,26,0.4) !important;
+      border-radius: 4px !important;
+      padding: 0.4rem 0.6rem !important;
+      color: var(--text) !important;
+      font-size: 0.75rem !important;
+      box-shadow: none !important;
+    }
+    #watch-list li * { color: inherit !important; font-family: inherit !important; font-size: inherit !important; background: none !important; box-shadow: none !important; }
+    #watch-list button[data-remove-watch] {
+      background: rgba(248,113,113,0.12) !important;
+      color: var(--red) !important;
+      border: 1px solid rgba(248,113,113,0.3) !important;
+      border-radius: 3px !important;
+      padding: 0.15rem 0.4rem !important;
+      font-size: 0.65rem !important;
+      cursor: pointer !important;
+    }
+    #watch-list button[data-set-active] { font-weight: 600 !important; }
+    #watch-list span[style*="color:#86efac"] { color: var(--green) !important; font-size: 0.65rem !important; }
+
+    /* ── Activity feed override ── */
+    #activity-feed li {
+      padding: 0.4rem 0.6rem !important;
+      border-radius: 4px !important;
+      background: none !important;
+      font-size: 0.73rem !important;
+      color: var(--muted) !important;
+      border-left: 2px solid var(--border) !important;
+      box-shadow: none !important;
+      animation: fadeSlide 0.3s ease !important;
+    }
+    #activity-feed li strong { color: var(--text) !important; font-weight: normal !important; text-transform: none !important; }
+    #activity-feed li p { margin: 0.2rem 0 0 !important; color: var(--muted) !important; font-size: 0.68rem !important; }
+
+    /* ── Responsive pet art ── */
+    @media (max-width: 380px) {
+      #pet-art { font-size: 0.95rem; }
+    }
+
+    /* ── Responsive layout ── */
+    @media (max-width: 480px) {
+      body { font-size: 14px; }
+      .card { padding: 0.75rem; }
+    }
   </style>
 </head>
 <body>
@@ -258,6 +305,22 @@
         <span id="stat-focus" style="color:var(--text)">50</span>
       </div>
     </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       GITHUB CONNECT
+       ══════════════════════════════════════ -->
+  <div class="card flex flex-col gap-2">
+    <div class="section-label">— github connect —</div>
+    <div class="flex gap-2 items-center">
+      <span class="dot off" id="status-dot"></span>
+      <span class="text-xs" style="color:var(--muted)" id="status-label">not connected</span>
+    </div>
+    <div class="flex gap-2">
+      <input id="github-username-input" class="txt-input" type="text" placeholder="your github username..." autocomplete="off" spellcheck="false" />
+      <button id="connect-btn" class="btn-primary">connect</button>
+    </div>
+    <div id="connect-error" class="text-xs hidden" style="color:var(--red)"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -395,13 +458,12 @@
 <script type="module">
   import { startPolling, stopPolling } from './github-feed.js';
 
-  const input  = document.getElementById('watch-input');
+  const input  = document.getElementById('github-username-input');
   const btn    = document.getElementById('connect-btn');
   const errEl  = document.getElementById('connect-error');
   const dot    = document.getElementById('status-dot');
   const label  = document.getElementById('status-label');
 
-  // Also wire the header connect button if present
   function getUsername() {
     return (input?.value || '').trim();
   }
