@@ -1,386 +1,398 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Animated Creatures</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background-color: #0f172a; /* tailwind slate-900 */
-            color: #4ade80; /* tailwind green-400 */
-        }
-        .ascii-container {
-            text-shadow: 0 0 5px rgba(74, 222, 128, 0.4);
-        }
-        /* Custom scrollbar for aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII Companion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --green:   #4ade80;
+      --dim:     #166534;
+      --bg:      #080d08;
+      --surface: #0c150c;
+      --border:  #1a2e1a;
+      --text:    #86efac;
+      --muted:   #4b5563;
+      --red:     #f87171;
+      --yellow:  #fbbf24;
+      --blue:    #60a5fa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      min-height: 100vh;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .glow { text-shadow: 0 0 8px rgba(74,222,128,0.5); }
+
+    /* ── Pet art ── */
+    #pet-art {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.15rem;
+      line-height: 1.45;
+      white-space: pre;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(74,222,128,0.7);
+      min-height: 5.8rem;
+      display: block;
+      text-align: left;
+      transition: color 0.4s;
+    }
+
+    /* ── Speech bubble ── */
+    #speech-bubble {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--dim);
+      border-radius: 8px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.78rem;
+      color: var(--green);
+      min-height: 2rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    #speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 22px;
+      border-width: 8px 5px 0 5px;
+      border-style: solid;
+      border-color: var(--dim) transparent transparent transparent;
+    }
+
+    /* ── Status dot ── */
+    .dot { width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0; }
+    .dot.on  { background:var(--green); box-shadow:0 0 5px var(--green); animation:pulse 2s infinite; }
+    .dot.off { background:var(--muted); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    /* ── Mood badge ── */
+    #companion-mood {
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid var(--dim);
+      font-size: 0.7rem;
+      color: var(--green);
+      text-transform: capitalize;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Stat bars ── */
+    .stat-bar-track {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease, background 0.6s ease;
+    }
+
+    /* ── Buttons ── */
+    button, .btn {
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--dim);
+      color: var(--green);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 4px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      background: rgba(74,222,128,0.08);
+      border-color: var(--green);
+      box-shadow: 0 0 8px rgba(74,222,128,0.15);
+    }
+
+    /* ── Input ── */
+    .txt-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--green);
+      font-family: inherit;
+      font-size: 0.82rem;
+      padding: 0.38rem 0.6rem;
+      border-radius: 4px;
+      outline: none;
+      flex: 1;
+    }
+    .txt-input:focus { border-color: var(--dim); }
+    .txt-input::placeholder { color: var(--muted); }
+
+    /* ── Activity feed items ── */
+    .feed-item {
+      border-left: 2px solid var(--border);
+      padding: 0.3rem 0.5rem;
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.4;
+      animation: fadeSlide 0.3s ease;
+    }
+    .feed-item.fresh {
+      border-left-color: var(--green);
+      color: var(--text);
+    }
+    @keyframes fadeSlide { from{opacity:0;transform:translateX(-4px)} to{opacity:1} }
+
+    /* ── Watch list items ── */
+    .watch-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      background: rgba(26,46,26,0.4);
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+    .watch-item .label { flex: 1; color: var(--text); }
+    .watch-item .type  { color: var(--muted); font-size: 0.68rem; }
+    .watch-item .active-badge { color: var(--green); font-size: 0.65rem; }
+
+    /* ── Scanlines ── */
+    .scanlines {
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+    }
+
+    /* ── Blink ── */
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50%{opacity:0} }
+
+    /* ── Section card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+    }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+  </style>
 </head>
-<body class="min-h-screen p-8 flex flex-col items-center justify-center font-sans">
+<body>
 
-    <div class="max-w-6xl w-full">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold tracking-widest text-emerald-400 mb-2" style="text-shadow: 0 0 10px rgba(52, 211, 153, 0.6);">
-                ASCII MENAGERIE
-            </h1>
-            <p class="text-slate-400 text-sm md:text-base uppercase tracking-widest">30 Digital Lifeforms</p>
-        </header>
+<div class="max-w-sm mx-auto px-3 py-5 flex flex-col gap-3">
 
-        <main id="creature-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            <!-- Creatures will be injected here via JavaScript -->
-        </main>
+  <!-- Header -->
+  <header class="text-center pb-1">
+    <h1 class="text-lg tracking-widest text-emerald-400 glow font-bold">ASCII COMPANION</h1>
+    <p class="text-xs mt-0.5" style="color:var(--muted)">your github dev buddy</p>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       PET STAGE  (animation owned by agent_a)
+       ══════════════════════════════════════ -->
+  <div class="card scanlines flex flex-col gap-3">
+
+    <!-- top bar: name + mood -->
+    <div class="flex justify-between items-center">
+      <span id="companion-name" class="text-xs tracking-widest" style="color:var(--dim)">ASCII COMPANION</span>
+      <span id="companion-mood">idle</span>
     </div>
 
-    <script>
-        // Data for each creature including its name, animation frames, and update speed
-        const creatures = [
-            {
-                name: "Classic Slime",
-                speed: 600,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `,
-                    `  ____  \n / > <\\ \n \\____/ \n        `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Winking Slime",
-                speed: 600,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / - o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o -\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Bouncing Slime",
-                speed: 300,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `  ____  \n / o o\\ \n \\____/ \n        `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n        \n  ____  \n /_o_o\\ `
-                ]
-            },
-            {
-                name: "Sleepy Slime",
-                speed: 1000,
-                frames: [
-                    `   z    \n  ____  \n / - -\\ \n \\____/ `,
-                    `    Z   \n  ____  \n / - -\\ \n \\____/ `,
-                    `     Z  \n  ____  \n / - -\\ \n \\____/ `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Boiling Slime",
-                speed: 300,
-                frames: [
-                    `   .    \n  ____  \n / > <\\ \n \\____/ `,
-                    `     .  \n  ____  \n / > <\\ \n \\____/ `,
-                    `  .     \n  ____  \n / > <\\ \n \\____/ `,
-                    `    .   \n  ____  \n / > <\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Hungry Slime",
-                speed: 500,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\_--_/ `,
-                    `        \n  ____  \n / o o\\ \n \\_OO_/ `,
-                    `        \n  ____  \n / o o\\ \n \\_ww_/ `,
-                    `        \n  ____  \n / o o\\ \n \\_--_/ `
-                ]
-            },
-            {
-                name: "Spark Slime",
-                speed: 200,
-                frames: [
-                    `   * \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\*\n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n*\\____/ `,
-                    `        \n *____  \n / o o\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Hyper Slime",
-                speed: 150,
-                frames: [
-                    `  ____  \n / O O\\ \n \\____/ \n        `,
-                    `        \n  ____  \n / O O\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Dizzy Slime",
-                speed: 250,
-                frames: [
-                    `        \n  ____  \n / @ @\\ \n \\____/ `,
-                    `        \n  ____  \n / + +\\ \n \\____/ `,
-                    `        \n  ____  \n / x x\\ \n \\____/ `,
-                    `        \n  ____  \n / @ @\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Singing Slime",
-                speed: 600,
-                frames: [
-                    `   ♪    \n  ____  \n / ^ ^\\ \n \\_O__/ `,
-                    `        \n  ____  \n / ^ ^\\ \n \\_o__/ `,
-                    `      ♫ \n  ____  \n / ^ ^\\ \n \\_O__/ `,
-                    `        \n  ____  \n / ^ ^\\ \n \\_o__/ `
-                ]
-            },
-            {
-                name: "Happy Slime",
-                speed: 500,
-                frames: [
-                    `        \n  ____  \n / ^ ^\\ \n \\_U__/ `,
-                    `        \n  ____  \n / ^ ^\\ \n \\_D__/ `
-                ]
-            },
-            {
-                name: "Sad Slime",
-                speed: 800,
-                frames: [
-                    `        \n  ____  \n / T T\\ \n \\_n__/ `,
-                    `        \n  ____  \n / T T\\ \n \\_~__/ `,
-                    `  .     \n  ____  \n / T T\\ \n \\_n__/ `,
-                    `    .   \n  ____  \n / T T\\ \n \\_~__/ `
-                ]
-            },
-            {
-                name: "Angry Slime",
-                speed: 150,
-                frames: [
-                    `   /|   \n  ____  \n / > <\\ \n \\_m__/ `,
-                    `   |\\   \n  ____  \n / > <\\ \n \\_m__/ `
-                ]
-            },
-            {
-                name: "Scared Slime",
-                speed: 100,
-                frames: [
-                    `        \n  ____  \n / O O\\ \n \\_~__/ `,
-                    `        \n  ____  \n / o o\\ \n \\_~__/ `,
-                    `        \n  ____  \n / O O\\ \n \\_~__/ `,
-                    `        \n  .__.  \n / o o\\ \n \\_~__/ `
-                ]
-            },
-            {
-                name: "Confused Slime",
-                speed: 700,
-                frames: [
-                    `   ?    \n  ____  \n / o .\\ \n \\____/ `,
-                    `    ?   \n  ____  \n / . o\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "In Love Slime",
-                speed: 600,
-                frames: [
-                    `   ♥    \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
-                    `        \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
-                    `     ♥  \n  ____  \n / ♥ ♥\\ \n \\_w__/ `,
-                    `        \n  ____  \n / ♥ ♥\\ \n \\_w__/ `
-                ]
-            },
-            {
-                name: "Anxious Slime",
-                speed: 250,
-                frames: [
-                    `   ,    \n  ____  \n / o o\\ \n \\_~__/ `,
-                    `    ,   \n  ____  \n / o o\\ \n \\_~__/ `,
-                    `        \n  ____  \n / o o\\ \n \\_~__/ `,
-                    `  ,     \n  ____  \n / o o\\ \n \\_~__/ `
-                ]
-            },
-            {
-                name: "Zen Slime",
-                speed: 1500,
-                frames: [
-                    `   ~    \n  ____  \n / - -\\ \n \\____/ `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Surprised Slime",
-                speed: 400,
-                frames: [
-                    `        \n  ____  \n / O O\\ \n \\_O__/ `,
-                    `   !    \n  ____  \n / O O\\ \n \\_O__/ `,
-                    `   !!   \n  ____  \n / O O\\ \n \\_O__/ `,
-                    `        \n  ____  \n / o o\\ \n \\_o__/ `
-                ]
-            },
-            {
-                name: "Embarrassed Slime",
-                speed: 900,
-                frames: [
-                    `        \n  ____  \n / ///\\ \n \\_.._/ `,
-                    `        \n  ____  \n / ///\\ \n \\_**_/ `
-                ]
-            },
-            {
-                name: "Idle Slime",
-                speed: 300,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / - -\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / o .\\ \n \\____/ `,
-                    `        \n  ____  \n / o .\\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n / . o\\ \n \\____/ `,
-                    `        \n  ____  \n / . o\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Thinking Slime",
-                speed: 500,
-                frames: [
-                    `        \n  ____  \n / ^ ^\\ \n \\____/ `,
-                    `   .    \n  ____  \n / ^ ^\\ \n \\____/ `,
-                    `   ..   \n  ____  \n / ^ ^\\ \n \\____/ `,
-                    `   ...  \n  ____  \n / ^ ^\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Typing Slime",
-                speed: 150,
-                frames: [
-                    `        \n  ____  \n / - -\\ \n \\_ww_/ `,
-                    `        \n  ____  \n / - -\\ \n \\_mm_/ `,
-                    `        \n  ____  \n / - -\\ \n \\_wm_/ `,
-                    `        \n  ____  \n / - -\\ \n \\_mw_/ `
-                ]
-            },
-            {
-                name: "Listening Slime",
-                speed: 400,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `   ( )  \n  ____  \n / o o\\ \n \\____/ `,
-                    `  (( )) \n  ____  \n / o o\\ \n \\____/ `,
-                    `   ( )  \n  ____  \n / o o\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Error Slime",
-                speed: 200,
-                frames: [
-                    `        \n  ____  \n / > <\\ \n \\____/ `,
-                    `  \\  /  \n  ____  \n / > <\\ \n \\____/ `,
-                    `   ><   \n  ____  \n / > <\\ \n \\____/ `,
-                    `  /  \\  \n  ____  \n / > <\\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Success Slime",
-                speed: 200,
-                frames: [
-                    `        \n  ____  \n / ^ ^\\ \n \\_D__/ `,
-                    `   .    \n  ____  \n / ^ ^\\ \n \\_D__/ `,
-                    `  \\|/   \n  ____  \n / ^ ^\\ \n \\_D__/ `,
-                    ` --*--  \n  ____  \n / ^ ^\\ \n \\_D__/ `,
-                    `  /|\\   \n  ____  \n / ^ ^\\ \n \\_D__/ `
-                ]
-            },
-            {
-                name: "Scanning Slime",
-                speed: 150,
-                frames: [
-                    `        \n  ____  \n / .  \\ \n \\____/ `,
-                    `        \n  ____  \n /  . \\ \n \\____/ `,
-                    `        \n  ____  \n /   .\\ \n \\____/ `,
-                    `        \n  ____  \n /  . \\ \n \\____/ `
-                ]
-            },
-            {
-                name: "Greeting Slime",
-                speed: 250,
-                frames: [
-                    `        \n  ____/ \n / ^ ^| \n \\____/ `,
-                    `        \n  ____\\ \n / ^ ^| \n \\____/ `
-                ]
-            },
-            {
-                name: "Agreeing Slime",
-                speed: 400,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\_v__/ `,
-                    `        \n  ____  \n / - -\\ \n \\_v__/ `,
-                    `        \n        \n  ____  \n /_v_v\\ `,
-                    `        \n  ____  \n / o o\\ \n \\_v__/ `
-                ]
-            },
-            {
-                name: "Disagreeing Slime",
-                speed: 200,
-                frames: [
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n /o o \\ \n \\____/ `,
-                    `        \n  ____  \n / o o\\ \n \\____/ `,
-                    `        \n  ____  \n /  oo\\ \n \\____/ `
-                ]
-            }
-        ];
+    <!-- speech bubble -->
+    <div id="speech-bubble">
+      <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
+    </div>
 
-        const gridElement = document.getElementById('creature-grid');
+    <!-- ASCII pet -->
+    <div class="flex justify-center">
+      <pre id="pet-art">  ____
+ / o o\
+ \____/ </pre>
+    </div>
 
-        // Initialize and render the creatures
-        creatures.forEach((creature, index) => {
-            // Create container for the card
-            const card = document.createElement('div');
-            card.className = "bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center transform transition-transform hover:scale-105 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-900/50 shadow-md";
+    <!-- stats row -->
+    <div class="grid grid-cols-3 gap-2 text-xs" style="color:var(--muted)">
+      <div class="flex flex-col gap-1">
+        <span>excitement</span>
+        <div class="stat-bar-track">
+          <div id="bar-excitement" class="stat-bar-fill" style="width:50%;background:var(--green)"></div>
+        </div>
+        <span id="stat-excitement" style="color:var(--text)">50</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span>social</span>
+        <div class="stat-bar-track">
+          <div id="bar-social" class="stat-bar-fill" style="width:50%;background:var(--blue)"></div>
+        </div>
+        <span id="stat-social" style="color:var(--text)">50</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span>focus</span>
+        <div class="stat-bar-track">
+          <div id="bar-focus" class="stat-bar-fill" style="width:50%;background:var(--yellow)"></div>
+        </div>
+        <span id="stat-focus" style="color:var(--text)">50</span>
+      </div>
+    </div>
+  </div>
 
-            // Create title
-            const title = document.createElement('h2');
-            title.className = "text-xs font-bold text-slate-300 uppercase tracking-widest mb-4 border-b border-slate-600 pb-1 w-full text-center";
-            title.innerText = creature.name;
+  <!-- ══════════════════════════════════════
+       WATCH LIST  (wired by agent_b / app.js)
+       ══════════════════════════════════════ -->
+  <div class="card" id="runtime-root">
+    <div class="section-label">— watch list —</div>
 
-            // Create preformatted text block for ASCII art
-            const pre = document.createElement('pre');
-            pre.className = "ascii-container font-mono text-sm md:text-base whitespace-pre leading-snug flex items-center justify-center min-h-[120px]";
-            pre.id = `creature-art-${index}`;
-            pre.innerText = creature.frames[0]; // Set initial frame
+    <form id="watch-form" class="flex gap-2 mb-3">
+      <input id="watch-input" class="txt-input" type="text" placeholder="owner/repo or label" autocomplete="off" />
+      <button type="submit" class="btn-primary">add</button>
+    </form>
 
-            // Assemble card
-            card.appendChild(title);
-            card.appendChild(pre);
-            gridElement.appendChild(card);
+    <ul id="watch-list" class="flex flex-col gap-1 mb-3">
+      <li class="text-xs" style="color:var(--muted)">no watches yet</li>
+    </ul>
 
-            // Start animation loop for this specific creature
-            let currentFrame = 0;
-            setInterval(() => {
-                currentFrame = (currentFrame + 1) % creature.frames.length;
-                document.getElementById(`creature-art-${index}`).innerText = creature.frames[currentFrame];
-            }, creature.speed);
-        });
-    </script>
-    <script type="module" src="./app.js"></script>
+    <button id="simulate-event" class="btn-primary w-full mb-2">⚡ simulate event</button>
+
+    <div class="flex gap-2">
+      <button id="export-state" class="btn-primary flex-1">↑ export</button>
+      <label class="btn-primary flex-1 text-center cursor-pointer">
+        ↓ import
+        <input id="import-state" type="file" accept="application/json" class="hidden" />
+      </label>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       ACTIVITY FEED  (wired by agent_b)
+       ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="section-label">— activity feed —</div>
+    <ul id="activity-feed" class="flex flex-col gap-1 max-h-44 overflow-y-auto">
+      <li class="feed-item">no events yet<span class="blink">_</span></li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs pb-2" style="color:var(--muted)">
+    <span id="poll-status">polling paused</span>
+  </footer>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     ANIMATION BRIDGE  (agent_a)
+     Watches mood changes from app.js and drives the ASCII pet.
+     ══════════════════════════════════════ -->
+<script type="module">
+  import {
+    startAnimation,
+    getPassiveMood,
+    getMoodForEvent,
+    getReactionText,
+    triggerReaction,
+  } from './animations.js';
+
+  const art = document.getElementById('pet-art');
+  const moodBadge = document.getElementById('companion-mood');
+
+  let currentStop = startAnimation(art, 'greeting');
+  let currentMood = 'greeting';
+
+  // Sync stat bars with numeric values
+  function syncBars() {
+    const vals = {
+      excitement: parseFloat(document.getElementById('stat-excitement')?.textContent || '50'),
+      social:     parseFloat(document.getElementById('stat-social')?.textContent || '50'),
+      focus:      parseFloat(document.getElementById('stat-focus')?.textContent || '50'),
+    };
+    const pct = v => Math.max(0, Math.min(100, v)) + '%';
+    const barE = document.getElementById('bar-excitement');
+    const barS = document.getElementById('bar-social');
+    const barF = document.getElementById('bar-focus');
+    if (barE) { barE.style.width = pct(vals.excitement); barE.style.background = vals.excitement > 60 ? 'var(--green)' : vals.excitement > 30 ? 'var(--yellow)' : 'var(--red)'; }
+    if (barS) { barS.style.width = pct(vals.social); barS.style.background = vals.social > 60 ? 'var(--blue)' : vals.social > 30 ? 'var(--yellow)' : 'var(--red)'; }
+    if (barF) { barF.style.width = pct(vals.focus); barF.style.background = vals.focus > 60 ? 'var(--yellow)' : vals.focus > 30 ? 'var(--green)' : 'var(--red)'; }
+  }
+
+  // Change the pet animation to match a new mood key
+  function changeMood(moodKey) {
+    if (moodKey === currentMood) return;
+    if (currentStop) currentStop();
+    currentMood = moodKey;
+    currentStop = startAnimation(art, moodKey);
+    if (moodBadge) moodBadge.textContent = moodKey;
+    syncBars();
+  }
+
+  // Expose a hook for app.js to call:
+  //   window.petReact(eventType, reactionText)
+  window.petReact = function(eventType, reactionText) {
+    const mood = getMoodForEvent(eventType);
+    const text = reactionText || getReactionText(eventType);
+    const reactionEl = document.getElementById('reaction-text');
+    if (reactionEl) reactionEl.textContent = text;
+
+    if (currentStop) currentStop();
+    triggerReaction(art, mood, 3000, getPassiveMood(0), (stop) => {
+      currentStop = stop;
+      currentMood = getPassiveMood(0);
+      if (moodBadge) moodBadge.textContent = currentMood;
+      syncBars();
+    });
+    currentMood = mood;
+  };
+
+  // Expose mood change for app.js passive state updates:
+  //   window.petSetMood(moodKey)
+  window.petSetMood = changeMood;
+
+  // Poll for mood changes via companion-mood badge mutations
+  const observer = new MutationObserver(() => {
+    const mood = moodBadge?.textContent?.trim()?.toLowerCase();
+    if (mood && mood !== currentMood) {
+      changeMood(mood);
+    }
+    syncBars();
+  });
+  if (moodBadge) observer.observe(moodBadge, { childList: true, characterData: true, subtree: true });
+
+  // Passive mood after 2s if no events
+  setTimeout(() => {
+    if (currentMood === 'greeting') {
+      changeMood(getPassiveMood(60));
+    }
+  }, 2000);
+
+  // Sync bars on stat updates
+  new MutationObserver(syncBars).observe(document.body, { subtree: true, childList: true, characterData: true });
+</script>
+
+<!-- App wiring (owned by agent_b / Codex) -->
+<script type="module" src="./app.js"></script>
+
 </body>
 </html>
