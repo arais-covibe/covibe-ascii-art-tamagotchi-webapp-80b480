@@ -129,33 +129,49 @@
       pointer-events: none;
     }
 
-    /* ── Speech bubble — above the creature ── */
+    /* ── Speech bubble wrapper ── */
+    #speech-bubble-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 1rem 1.5rem 0.5rem;
+      flex-shrink: 0;
+    }
+    /* ── Speech bubble — actual bubble shape ── */
     #speech-bubble {
       position: relative;
-      background: rgba(5,12,5,0.95);
-      border-bottom: 1px solid var(--border);
-      padding: 0.9rem 1.5rem;
-      font-size: 1.15rem;
+      background: var(--surface);
+      border: 1px solid rgba(74,222,128,0.35);
+      border-radius: 18px;
+      padding: 0.85rem 1.4rem;
+      font-size: 1.05rem;
       color: var(--green);
       line-height: 1.5;
       word-break: break-word;
-      flex-shrink: 0;
       text-align: center;
-      min-height: 3.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      max-width: 640px;
+      box-shadow: 0 0 16px rgba(74,222,128,0.08);
     }
-    /* downward arrow pointing at the creature */
+    /* tail pointing down toward the creature */
     #speech-bubble::after {
       content: '';
       position: absolute;
-      bottom: -10px;
+      bottom: -14px;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 10px 10px 0 10px;
+      border-width: 14px 10px 0 10px;
       border-style: solid;
-      border-color: var(--border) transparent transparent transparent;
+      border-color: rgba(74,222,128,0.35) transparent transparent transparent;
+    }
+    #speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 13px 9px 0 9px;
+      border-style: solid;
+      border-color: var(--surface) transparent transparent transparent;
+      z-index: 1;
     }
 
     /* ── Status dot ── */
@@ -436,8 +452,10 @@
   </div>
 
   <!-- Speech bubble — above the creature -->
-  <div id="speech-bubble">
-    <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
+  <div id="speech-bubble-wrap">
+    <div id="speech-bubble">
+      <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
+    </div>
   </div>
 
   <!-- Pet stage — takes all remaining space -->
