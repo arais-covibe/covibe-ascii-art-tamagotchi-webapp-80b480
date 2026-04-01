@@ -129,17 +129,33 @@
       pointer-events: none;
     }
 
-    /* ── Speech bubble — overlaid above stat bar ── */
+    /* ── Speech bubble — above the creature ── */
     #speech-bubble {
       position: relative;
-      background: rgba(5,12,5,0.92);
-      border-top: 1px solid var(--border);
-      padding: 0.45rem 1rem;
-      font-size: 0.78rem;
+      background: rgba(5,12,5,0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.5rem;
+      font-size: 1.15rem;
       color: var(--green);
       line-height: 1.5;
       word-break: break-word;
       flex-shrink: 0;
+      text-align: center;
+      min-height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* downward arrow pointing at the creature */
+    #speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 10px 0 10px;
+      border-style: solid;
+      border-color: var(--border) transparent transparent transparent;
     }
 
     /* ── Status dot ── */
@@ -418,16 +434,16 @@
     <button id="settings-btn" title="settings">⚙</button>
   </div>
 
+  <!-- Speech bubble — above the creature -->
+  <div id="speech-bubble">
+    <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
+  </div>
+
   <!-- Pet stage — takes all remaining space -->
   <div id="pet-stage-bezel">
     <pre id="pet-art">  ____
  / o o\
  \____/ </pre>
-  </div>
-
-  <!-- Speech bubble -->
-  <div id="speech-bubble">
-    <span id="reaction-text">waiting for activity<span class="blink">_</span></span>
   </div>
 
   <!-- Stat bars -->
