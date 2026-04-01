@@ -250,13 +250,18 @@
 </head>
 <body>
 
-<div class="max-w-sm mx-auto px-3 py-5 flex flex-col gap-3">
+<div class="w-full max-w-3xl mx-auto px-4 py-5" id="app-layout">
 
   <!-- Header -->
-  <header class="text-center pb-1">
+  <header class="text-center pb-2">
     <h1 class="text-lg tracking-widest text-emerald-400 glow font-bold">ASCII COMPANION</h1>
     <p class="text-xs mt-0.5" style="color:var(--muted)">your github dev buddy</p>
   </header>
+
+  <div class="flex flex-col md:flex-row gap-3 items-start">
+
+  <!-- ══ LEFT COLUMN: pet ══ -->
+  <div class="flex flex-col gap-3 w-full md:w-64 md:flex-shrink-0">
 
   <!-- ══════════════════════════════════════
        PET STAGE  (animation owned by agent_a)
@@ -306,6 +311,11 @@
       </div>
     </div>
   </div>
+
+  </div><!-- end left column -->
+
+  <!-- ══ RIGHT COLUMN: controls + feed ══ -->
+  <div class="flex flex-col gap-3 flex-1 min-w-0">
 
   <!-- ══════════════════════════════════════
        GITHUB CONNECT
@@ -359,8 +369,11 @@
     </ul>
   </div>
 
+  </div><!-- end right column -->
+  </div><!-- end flex row -->
+
   <!-- Footer -->
-  <footer class="text-center text-xs pb-2" style="color:var(--muted)">
+  <footer class="text-center text-xs pb-2 pt-1" style="color:var(--muted)">
     <span id="poll-status">polling paused</span>
   </footer>
 
